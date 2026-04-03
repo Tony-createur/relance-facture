@@ -19,15 +19,12 @@
       --green: #22c55e;
       --green-dark: #15803d;
       --orange: #f59e0b;
-      --red: #ef4444;
       --shadow: 0 20px 60px rgba(0,0,0,0.35);
       --radius: 22px;
-      --radius-sm: 14px;
       --max: 1180px;
     }
 
     * { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -119,21 +116,25 @@
     }
 
     .btn:hover { transform: translateY(-1px); }
+
     .btn-primary {
       background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
       color: white;
       box-shadow: 0 14px 35px rgba(47,111,216,0.35);
     }
+
     .btn-secondary {
       background: rgba(255,255,255,0.06);
       color: white;
       border: 1px solid rgba(255,255,255,0.12);
     }
+
     .btn-success {
       background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
       color: white;
       box-shadow: 0 14px 35px rgba(21,128,61,0.28);
     }
+
     .btn-full { width: 100%; }
 
     .hero {
@@ -182,11 +183,7 @@
       margin-top: 22px;
     }
 
-    .point,
-    .card,
-    .price-card,
-    .testimonial,
-    .faq-item {
+    .point, .card, .price-card, .testimonial, .faq-item {
       background: var(--card);
       border: 1px solid var(--card-border);
       box-shadow: var(--shadow);
@@ -278,9 +275,7 @@
       font-size: 14px;
     }
 
-    input,
-    select,
-    textarea {
+    input, select, textarea {
       width: 100%;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.05);
@@ -504,7 +499,12 @@
       h1 { font-size: 38px; }
       .section-head h2 { font-size: 30px; }
       .row-2 { grid-template-columns: 1fr; }
-      .nav { min-height: auto; padding: 14px 0; align-items: flex-start; flex-direction: column; }
+      .nav {
+        min-height: auto;
+        padding: 14px 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
       .nav-links { width: 100%; }
     }
   </style>
@@ -644,7 +644,7 @@
             </div>
 
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
-              <button class="btn btn-success" id="generateBtn">Générer le texte</button>
+              <button class="btn btn-success" id="generateBtn" type="button">Générer le texte</button>
               <button class="btn btn-secondary" id="resetBtn" type="button">Réinitialiser</button>
             </div>
 
@@ -698,7 +698,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Tarifs simples</h2>
-          <p>Tu peux vendre dès aujourd'hui avec des liens Stripe Payment Links. Remplace simplement les # par tes liens Stripe.</p>
+          <p>Remplace simplement les liens des boutons par tes liens Stripe Payment Links.</p>
         </div>
 
         <div class="pricing-grid">
@@ -713,7 +713,7 @@
               <li>Copie instantanée</li>
               <li>Sans engagement</li>
             </ul>
-            <a href="#" class="btn btn-secondary btn-full" id="buySolo">Acheter maintenant</a>
+            <a href="TON_LIEN_STRIPE_SOLO" class="btn btn-secondary btn-full" id="buySolo">Acheter maintenant</a>
           </div>
 
           <div class="price-card featured">
@@ -727,7 +727,7 @@
               <li>Copie instantanée</li>
               <li>Base idéale pour futures options</li>
             </ul>
-            <a href="#" class="btn btn-primary btn-full" id="buyPro">Passer en Pro</a>
+            <a href="TON_LIEN_STRIPE_PRO" class="btn btn-primary btn-full" id="buyPro">Passer en Pro</a>
           </div>
         </div>
       </div>
@@ -737,7 +737,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Exemples de clients</h2>
-          <p>Tu peux cibler des profils très simples à comprendre : artisans, freelances, agences, garages, commerçants, BTP, maintenance, prestations de service.</p>
+          <p>Artisans, freelances, agences, garages, commerçants, BTP, maintenance, prestations de service.</p>
         </div>
 
         <div class="testimonials">
@@ -761,7 +761,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2>FAQ</h2>
-          <p>Tu peux garder cette section telle quelle ou l'adapter à ton branding.</p>
+          <p>Simple, claire, prête à laisser telle quelle.</p>
         </div>
 
         <div class="faq">
@@ -805,11 +805,59 @@
     const state = {
       mode: 'soft',
       templates: {
-        soft: ({ company, client, invoice, amount, dueDate, service, contact, notes, daysLate }) => `Objet : Relance de paiement - facture ${invoice}\n\nBonjour ${client},\n\nJe me permets de revenir vers vous concernant la facture ${invoice}, d'un montant de ${amount} € TTC, relative à ${service}, arrivée à échéance le ${dueDate}.\n\nÀ ce jour, sauf erreur de notre part, son règlement ne nous est pas encore parvenu.${daysLate > 0 ? ` Le retard est actuellement de ${daysLate} jour(s).` : ''}\n\nJe vous remercie de bien vouloir nous confirmer la bonne prise en compte de ce règlement et, le cas échéant, sa date de paiement prévue.\n\n${notes ? `Précision : ${notes}\n\n` : ''}Dans l'attente de votre retour,\n\nCordialement,\n${company}\n${contact}`,
+        soft: ({ company, client, invoice, amount, dueDate, service, contact, notes, daysLate }) => `Objet : Relance de paiement - facture ${invoice}
 
-        firm: ({ company, client, invoice, amount, dueDate, service, contact, notes, daysLate, delayDays }) => `Objet : Deuxième relance - facture impayée ${invoice}\n\nBonjour ${client},\n\nSauf erreur de notre part, la facture ${invoice}, d'un montant de ${amount} € TTC, relative à ${service}, échue le ${dueDate}, reste impayée à ce jour malgré notre précédent rappel.${daysLate > 0 ? ` Le retard atteint désormais ${daysLate} jour(s).` : ''}\n\nNous vous demandons de procéder à son règlement dans un délai de ${delayDays} jours et de nous transmettre une confirmation de paiement.\n\n${notes ? `Précision : ${notes}\n\n` : ''}À défaut de régularisation rapide, nous nous réserverons la possibilité d'engager une démarche de recouvrement adaptée.\n\nMerci de votre retour rapide.\n\nCordialement,\n${company}\n${contact}`,
+Bonjour ${client},
 
-        formal: ({ company, client, invoice, amount, dueDate, service, contact, notes, delayDays }) => `Objet : Mise en demeure de payer - facture ${invoice}\n\nMadame, Monsieur,\n\nNous vous mettons en demeure de régler la somme de ${amount} € TTC correspondant à la facture ${invoice}, relative à ${service}, arrivée à échéance le ${dueDate}.\n\nÀ ce jour, sauf erreur de notre part, cette créance demeure impayée. Nous vous demandons de régulariser la situation dans un délai de ${delayDays} jours à compter de la réception du présent courrier.\n\n${notes ? `Précision : ${notes}\n\n` : ''}À défaut de paiement dans ce délai, nous nous réserverons la possibilité d'engager toute démarche utile au recouvrement de cette créance.\n\nVeuillez effectuer le règlement sans délai et nous transmettre votre justificatif de paiement.\n\nCordialement,\n${company}\n${contact}`
+Je me permets de revenir vers vous concernant la facture ${invoice}, d'un montant de ${amount} € TTC, relative à ${service}, arrivée à échéance le ${dueDate}.
+
+À ce jour, sauf erreur de notre part, son règlement ne nous est pas encore parvenu.${daysLate > 0 ? ` Le retard est actuellement de ${daysLate} jour(s).` : ''}
+
+Je vous remercie de bien vouloir nous confirmer la bonne prise en compte de ce règlement et, le cas échéant, sa date de paiement prévue.
+
+${notes ? `Précision : ${notes}
+
+` : ''}Dans l'attente de votre retour,
+
+Cordialement,
+${company}
+${contact}`,
+
+        firm: ({ company, client, invoice, amount, dueDate, service, contact, notes, daysLate, delayDays }) => `Objet : Deuxième relance - facture impayée ${invoice}
+
+Bonjour ${client},
+
+Sauf erreur de notre part, la facture ${invoice}, d'un montant de ${amount} € TTC, relative à ${service}, échue le ${dueDate}, reste impayée à ce jour malgré notre précédent rappel.${daysLate > 0 ? ` Le retard atteint désormais ${daysLate} jour(s).` : ''}
+
+Nous vous demandons de procéder à son règlement dans un délai de ${delayDays} jours et de nous transmettre une confirmation de paiement.
+
+${notes ? `Précision : ${notes}
+
+` : ''}À défaut de régularisation rapide, nous nous réserverons la possibilité d'engager une démarche de recouvrement adaptée.
+
+Merci de votre retour rapide.
+
+Cordialement,
+${company}
+${contact}`,
+
+        formal: ({ company, client, invoice, amount, dueDate, service, contact, notes, delayDays }) => `Objet : Mise en demeure de payer - facture ${invoice}
+
+Madame, Monsieur,
+
+Nous vous mettons en demeure de régler la somme de ${amount} € TTC correspondant à la facture ${invoice}, relative à ${service}, arrivée à échéance le ${dueDate}.
+
+À ce jour, sauf erreur de notre part, cette créance demeure impayée. Nous vous demandons de régulariser la situation dans un délai de ${delayDays} jours à compter de la réception du présent courrier.
+
+${notes ? `Précision : ${notes}
+
+` : ''}À défaut de paiement dans ce délai, nous nous réserverons la possibilité d'engager toute démarche utile au recouvrement de cette créance.
+
+Veuillez effectuer le règlement sans délai et nous transmettre votre justificatif de paiement.
+
+Cordialement,
+${company}
+${contact}`
       }
     };
 
