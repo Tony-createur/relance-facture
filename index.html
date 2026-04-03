@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RelanceFacture — Relancez vos factures impayées en 2 minutes</title>
+  <meta name="description" content="Générez une relance simple, une relance ferme ou une mise en demeure pour vos factures impayées. Simple, rapide, efficace." />
+  <meta name="robots" content="index,follow" />
+  <style>
+    :root {
+      --bg: #08101f;
+      --bg-2: #0d1730;
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.12);
+      --text: #ffffff;
+      --muted: #b8c4d6;
+      --blue: #5da2ff;
+      --blue-dark: #2f6fd8;
+      --green: #22c55e;
+      --green-dark: #15803d;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .topbar {
+      background: linear-gradient(90deg, #112042 0%, #18346c 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: #dbe8ff;
+      font-weight: 700;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: rgba(8,16,31,0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 74px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-badge {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue) 0%, #8bb8ff 100%);
+      color: white;
+      box-shadow: 0 10px 25px rgba(93,162,255,0.35);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 700;
+      border-radius: 14px;
+      padding: 14px 20px;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+      color: white;
+      box-shadow: 0 14px 35px rgba(47,111,216,0.35);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn-success {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+      color: white;
+      box-shadow: 0 14px 35px rgba(21,128,61,0.28);
+    }
+    .btn-full { width: 100%; }
+
+    .hero {
+      padding: 56px 0 32px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 26px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(93,162,255,0.22);
+      background: rgba(93,162,255,0.12);
+      color: #d7e7ff;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 54px;
+      line-height: 1.02;
+      letter-spacing: -1.4px;
+    }
+
+    .accent { color: #8ec1ff; }
+
+    .lead {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 720px;
+    }
+
+    .hero-points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .point,
+    .card,
+    .price-card,
+    .testimonial,
+    .faq-item {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+    }
+
+    .point {
+      padding: 16px;
+      border-radius: 18px;
+    }
+
+    .point strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .point span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero-side {
+      padding: 22px;
+    }
+
+    .card-title {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .mini {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .alert {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(245,158,11,0.11);
+      border: 1px solid rgba(245,158,11,0.22);
+      color: #ffe7b0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .section {
+      padding: 26px 0;
+    }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 18px;
+    }
+
+    .section-head h2 {
+      margin: 0 0 10px;
+      font-size: 38px;
+      letter-spacing: -0.8px;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: #e4ecff;
+      font-size: 14px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      border-radius: 14px;
+      padding: 14px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #98a6c8;
+    }
+
+    textarea {
+      min-height: 280px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .pill.active {
+      background: rgba(93,162,255,0.18);
+      border-color: rgba(93,162,255,0.34);
+      color: #dceaff;
+    }
+
+    .output-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .subgrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature {
+      padding: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .price-card {
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .price-badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .price-card h3 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .price {
+      font-size: 44px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+
+    .price small {
+      font-size: 18px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .price-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 22px;
+    }
+
+    .price-card li {
+      padding: 9px 0;
+      color: #e7efff;
+      border-bottom: 1px dashed rgba(255,255,255,0.1);
+      font-size: 15px;
+    }
+
+    .price-card.featured {
+      border: 1px solid rgba(93,162,255,0.34);
+      background: linear-gradient(180deg, rgba(93,162,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .testimonial {
+      padding: 20px;
+    }
+
+    .testimonial strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .faq {
+      display: grid;
+      gap: 14px;
+    }
+
+    .faq-item {
+      padding: 18px 20px;
+    }
+
+    .faq-item h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .faq-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .cta-final {
+      padding: 30px;
+      text-align: center;
+    }
+
+    .cta-final h2 {
+      margin: 0 0 10px;
+      font-size: 36px;
+    }
+
+    footer {
+      padding: 28px 0 40px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .app-grid,
+      .pricing-grid,
+      .testimonials,
+      .subgrid,
+      .hero-points {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { font-size: 38px; }
+      .section-head h2 { font-size: 30px; }
+      .row-2 { grid-template-columns: 1fr; }
+      .nav { min-height: auto; padding: 14px 0; align-items: flex-start; flex-direction: column; }
+      .nav-links { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">Offre de lancement : créez vos relances impayées en quelques minutes, sans logiciel compliqué.</div>
+
+  <header>
+    <div class="wrap nav">
+      <a href="#top" class="logo">
+        <span class="logo-badge">RF</span>
+        <span>RelanceFacture</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#demo">Démo</a>
+        <a href="#features">Fonctionnement</a>
+        <a href="#pricing">Tarifs</a>
+        <a href="#faq">FAQ</a>
+        <a href="#pricing" class="btn btn-primary">Commencer</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">MVP prêt à vendre sur Netlify + Stripe</div>
+          <h1>Transformez une <span class="accent">facture impayée</span> en relance prête à envoyer.</h1>
+          <p class="lead">
+            Pour les indépendants, artisans, TPE, freelances et petites entreprises.
+            Remplissez le formulaire, choisissez le ton, récupérez votre texte immédiatement.
+          </p>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="#demo" class="btn btn-primary">Tester la démo</a>
+            <a href="#pricing" class="btn btn-secondary">Voir les tarifs</a>
+          </div>
+          <div class="hero-points">
+            <div class="point">
+              <strong>2 minutes</strong>
+              <span>pour générer un texte propre</span>
+            </div>
+            <div class="point">
+              <strong>3 niveaux</strong>
+              <span>simple, ferme, mise en demeure</span>
+            </div>
+            <div class="point">
+              <strong>1 page</strong>
+              <span>ultra simple à déployer</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-side card">
+          <h2 class="card-title">Le bon positionnement</h2>
+          <p class="mini">
+            Vous ne vendez pas du juridique complexe. Vous vendez un outil simple qui aide les pros à gagner du temps,
+            à relancer proprement et à récupérer plus vite leur argent.
+          </p>
+          <div class="alert">
+            Outil d'assistance rédactionnelle. Il ne remplace pas un avocat, un commissaire de justice ou un conseil juridique personnalisé.
+          </div>
+          <div style="margin-top:18px; display:grid; gap:12px;">
+            <div class="feature">
+              <h3>Très simple à vendre</h3>
+              <p>“Vous avez un impayé ? On vous génère le bon texte en 2 minutes.”</p>
+            </div>
+            <div class="feature">
+              <h3>Très simple à coder</h3>
+              <p>Une landing, un générateur, Stripe, puis évolution vers espace client.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="demo">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Démo immédiate</h2>
+          <p>Le client remplit le formulaire, clique sur générer, puis copie-colle la relance dans son email ou son courrier.</p>
+        </div>
+
+        <div class="app-grid">
+          <div class="card">
+            <h3 style="margin-top:0; font-size:26px;">Générateur de relance</h3>
+
+            <div class="field">
+              <label for="company">Votre société</label>
+              <input id="company" placeholder="Ex : Atelier Martin" />
+            </div>
+
+            <div class="field">
+              <label for="client">Nom du client débiteur</label>
+              <input id="client" placeholder="Ex : SAS Dupont" />
+            </div>
+
+            <div class="row-2">
+              <div class="field">
+                <label for="invoice">Numéro de facture</label>
+                <input id="invoice" placeholder="Ex : F2026-014" />
+              </div>
+              <div class="field">
+                <label for="amount">Montant TTC (€)</label>
+                <input id="amount" type="number" step="0.01" placeholder="Ex : 1280" />
+              </div>
+            </div>
+
+            <div class="row-2">
+              <div class="field">
+                <label for="dueDate">Date d'échéance</label>
+                <input id="dueDate" type="date" />
+              </div>
+              <div class="field">
+                <label for="delayDays">Délai demandé (jours)</label>
+                <select id="delayDays">
+                  <option value="8">8 jours</option>
+                  <option value="15">15 jours</option>
+                  <option value="30">30 jours</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="service">Prestation concernée</label>
+              <input id="service" placeholder="Ex : maintenance, chantier, prestation digitale" />
+            </div>
+
+            <div class="field">
+              <label for="contact">Votre email / téléphone</label>
+              <input id="contact" placeholder="Ex : contact@monsite.fr - 06 00 00 00 00" />
+            </div>
+
+            <div class="field">
+              <label for="notes">Précision facultative</label>
+              <input id="notes" placeholder="Ex : déjà relancé par téléphone" />
+            </div>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+              <button class="btn btn-success" id="generateBtn">Générer le texte</button>
+              <button class="btn btn-secondary" id="resetBtn" type="button">Réinitialiser</button>
+            </div>
+
+            <p class="note">Le formulaire fonctionne directement en HTML/JS, sans base de données.</p>
+          </div>
+
+          <div class="card">
+            <div class="output-head">
+              <h3 style="margin:0; font-size:26px;">Texte généré</h3>
+              <button class="btn btn-secondary" id="copyBtn" type="button">Copier</button>
+            </div>
+
+            <div class="pill-row">
+              <button class="pill active" data-mode="soft" type="button">Relance simple</button>
+              <button class="pill" data-mode="firm" type="button">Relance ferme</button>
+              <button class="pill" data-mode="formal" type="button">Mise en demeure</button>
+            </div>
+
+            <textarea id="output">Remplissez le formulaire puis cliquez sur “Générer le texte”.</textarea>
+            <p class="note">Astuce : vous pouvez aussi imprimer cette page en PDF depuis le navigateur.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Ce que vous vendez vraiment</h2>
+          <p>Un service utile, immédiat et compréhensible. C'est ce qui le rend simple à monétiser.</p>
+        </div>
+
+        <div class="subgrid">
+          <div class="feature">
+            <h3>Gain de temps</h3>
+            <p>Le client évite de rédiger à la main ou de chercher des modèles partout sur internet.</p>
+          </div>
+          <div class="feature">
+            <h3>Image pro</h3>
+            <p>Les relances sont structurées, propres, plus crédibles et plus fermes.</p>
+          </div>
+          <div class="feature">
+            <h3>Passage à l'action</h3>
+            <p>Le client n'attend plus. Il agit immédiatement avec un texte prêt à envoyer.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Tarifs simples</h2>
+          <p>Tu peux vendre dès aujourd'hui avec des liens Stripe Payment Links. Remplace simplement les # par tes liens Stripe.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-badge">Entrée de gamme</div>
+            <h3>Offre Solo</h3>
+            <div class="price">19€ <small>/ dossier</small></div>
+            <p class="mini">Parfait pour une première vente rapide.</p>
+            <ul>
+              <li>1 dossier de relance</li>
+              <li>3 modèles disponibles</li>
+              <li>Copie instantanée</li>
+              <li>Sans engagement</li>
+            </ul>
+            <a href="#" class="btn btn-secondary btn-full" id="buySolo">Acheter maintenant</a>
+          </div>
+
+          <div class="price-card featured">
+            <div class="price-badge">Le meilleur levier</div>
+            <h3>Offre Pro</h3>
+            <div class="price">29€ <small>/ mois</small></div>
+            <p class="mini">L'offre la plus rentable à pousser dans tes pubs ou ta prospection.</p>
+            <ul>
+              <li>Dossiers illimités</li>
+              <li>Historique local navigateur</li>
+              <li>Copie instantanée</li>
+              <li>Base idéale pour futures options</li>
+            </ul>
+            <a href="#" class="btn btn-primary btn-full" id="buyPro">Passer en Pro</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Exemples de clients</h2>
+          <p>Tu peux cibler des profils très simples à comprendre : artisans, freelances, agences, garages, commerçants, BTP, maintenance, prestations de service.</p>
+        </div>
+
+        <div class="testimonials">
+          <div class="testimonial">
+            <p>“Je n'avais pas envie de perdre du temps à écrire mes relances. Là, en 2 minutes c'était prêt.”</p>
+            <strong>Artisan indépendant</strong>
+          </div>
+          <div class="testimonial">
+            <p>“Le ton ferme m'a aidé à envoyer enfin une vraie relance, au lieu de repousser.”</p>
+            <strong>Freelance</strong>
+          </div>
+          <div class="testimonial">
+            <p>“Simple, direct, sans prise de tête. C'est exactement ce qu'il me fallait.”</p>
+            <strong>Petite entreprise</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>FAQ</h2>
+          <p>Tu peux garder cette section telle quelle ou l'adapter à ton branding.</p>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item">
+            <h3>Est-ce un service juridique ?</h3>
+            <p>Non. Il s'agit d'un outil d'assistance rédactionnelle destiné à aider à préparer des textes de relance ou de mise en demeure.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Est-ce compliqué à utiliser ?</h3>
+            <p>Non. Vous remplissez les champs, vous choisissez le ton, vous copiez le texte généré.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Puis-je l'utiliser pour plusieurs clients ?</h3>
+            <p>Oui, surtout avec l'offre Pro, pensée pour une utilisation régulière.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="card cta-final">
+          <h2>Prêt à lancer ce business ?</h2>
+          <p class="mini" style="max-width:720px; margin:0 auto 18px;">
+            Cette version tient en un seul fichier. Tu peux la mettre sur GitHub, connecter Netlify, brancher Stripe, puis commencer à tester une offre immédiatement.
+          </p>
+          <a href="#pricing" class="btn btn-primary">Lancer l'offre</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-grid">
+      <div>© <span id="year"></span> RelanceFacture — Tous droits réservés.</div>
+      <div>Mentions légales • Politique de confidentialité • CGV</div>
+    </div>
+  </footer>
+
+  <script>
+    const state = {
+      mode: 'soft',
+      templates: {
+        soft: ({ company, client, invoice, amount, dueDate, service, contact, notes, daysLate }) => `Objet : Relance de paiement - facture ${invoice}\n\nBonjour ${client},\n\nJe me permets de revenir vers vous concernant la facture ${invoice}, d'un montant de ${amount} € TTC, relative à ${service}, arrivée à échéance le ${dueDate}.\n\nÀ ce jour, sauf erreur de notre part, son règlement ne nous est pas encore parvenu.${daysLate > 0 ? ` Le retard est actuellement de ${daysLate} jour(s).` : ''}\n\nJe vous remercie de bien vouloir nous confirmer la bonne prise en compte de ce règlement et, le cas échéant, sa date de paiement prévue.\n\n${notes ? `Précision : ${notes}\n\n` : ''}Dans l'attente de votre retour,\n\nCordialement,\n${company}\n${contact}`,
+
+        firm: ({ company, client, invoice, amount, dueDate, service, contact, notes, daysLate, delayDays }) => `Objet : Deuxième relance - facture impayée ${invoice}\n\nBonjour ${client},\n\nSauf erreur de notre part, la facture ${invoice}, d'un montant de ${amount} € TTC, relative à ${service}, échue le ${dueDate}, reste impayée à ce jour malgré notre précédent rappel.${daysLate > 0 ? ` Le retard atteint désormais ${daysLate} jour(s).` : ''}\n\nNous vous demandons de procéder à son règlement dans un délai de ${delayDays} jours et de nous transmettre une confirmation de paiement.\n\n${notes ? `Précision : ${notes}\n\n` : ''}À défaut de régularisation rapide, nous nous réserverons la possibilité d'engager une démarche de recouvrement adaptée.\n\nMerci de votre retour rapide.\n\nCordialement,\n${company}\n${contact}`,
+
+        formal: ({ company, client, invoice, amount, dueDate, service, contact, notes, delayDays }) => `Objet : Mise en demeure de payer - facture ${invoice}\n\nMadame, Monsieur,\n\nNous vous mettons en demeure de régler la somme de ${amount} € TTC correspondant à la facture ${invoice}, relative à ${service}, arrivée à échéance le ${dueDate}.\n\nÀ ce jour, sauf erreur de notre part, cette créance demeure impayée. Nous vous demandons de régulariser la situation dans un délai de ${delayDays} jours à compter de la réception du présent courrier.\n\n${notes ? `Précision : ${notes}\n\n` : ''}À défaut de paiement dans ce délai, nous nous réserverons la possibilité d'engager toute démarche utile au recouvrement de cette créance.\n\nVeuillez effectuer le règlement sans délai et nous transmettre votre justificatif de paiement.\n\nCordialement,\n${company}\n${contact}`
+      }
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const output = $('output');
+    const pills = document.querySelectorAll('.pill');
+
+    function formatDate(inputDate) {
+      if (!inputDate) return '...';
+      const d = new Date(inputDate + 'T00:00:00');
+      return d.toLocaleDateString('fr-FR');
+    }
+
+    function getDaysLate(inputDate) {
+      if (!inputDate) return 0;
+      const due = new Date(inputDate + 'T00:00:00');
+      const today = new Date();
+      due.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+      const diff = Math.floor((today - due) / 86400000);
+      return diff > 0 ? diff : 0;
+    }
+
+    function parseAmount(value) {
+      const num = Number(value || 0);
+      return num.toFixed(2).replace('.', ',');
+    }
+
+    function getData() {
+      const dueRaw = $('dueDate').value;
+      return {
+        company: $('company').value.trim() || 'Votre société',
+        client: $('client').value.trim() || 'Nom du client',
+        invoice: $('invoice').value.trim() || 'N° à compléter',
+        amount: parseAmount($('amount').value),
+        dueDate: formatDate(dueRaw),
+        service: $('service').value.trim() || 'la prestation réalisée',
+        contact: $('contact').value.trim() || 'Vos coordonnées',
+        notes: $('notes').value.trim(),
+        delayDays: $('delayDays').value || '8',
+        daysLate: getDaysLate(dueRaw)
+      };
+    }
+
+    function render() {
+      const data = getData();
+      output.value = state.templates[state.mode](data);
+      saveForm();
+    }
+
+    function saveForm() {
+      const payload = {
+        company: $('company').value,
+        client: $('client').value,
+        invoice: $('invoice').value,
+        amount: $('amount').value,
+        dueDate: $('dueDate').value,
+        delayDays: $('delayDays').value,
+        service: $('service').value,
+        contact: $('contact').value,
+        notes: $('notes').value,
+        mode: state.mode,
+        output: output.value
+      };
+      localStorage.setItem('relancefacture_form', JSON.stringify(payload));
+    }
+
+    function loadForm() {
+      const raw = localStorage.getItem('relancefacture_form');
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        $('company').value = data.company || '';
+        $('client').value = data.client || '';
+        $('invoice').value = data.invoice || '';
+        $('amount').value = data.amount || '';
+        $('dueDate').value = data.dueDate || '';
+        $('delayDays').value = data.delayDays || '8';
+        $('service').value = data.service || '';
+        $('contact').value = data.contact || '';
+        $('notes').value = data.notes || '';
+        if (data.mode) {
+          state.mode = data.mode;
+          pills.forEach((pill) => pill.classList.toggle('active', pill.dataset.mode === state.mode));
+        }
+        output.value = data.output || output.value;
+      } catch (e) {}
+    }
+
+    function resetForm() {
+      $('company').value = '';
+      $('client').value = '';
+      $('invoice').value = '';
+      $('amount').value = '';
+      $('dueDate').value = '';
+      $('delayDays').value = '8';
+      $('service').value = '';
+      $('contact').value = '';
+      $('notes').value = '';
+      state.mode = 'soft';
+      pills.forEach((pill) => pill.classList.toggle('active', pill.dataset.mode === 'soft'));
+      render();
+    }
+
+    $('generateBtn').addEventListener('click', render);
+    $('resetBtn').addEventListener('click', resetForm);
+
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        pills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
+        state.mode = pill.dataset.mode;
+        render();
+      });
+    });
+
+    $('copyBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(output.value);
+        $('copyBtn').textContent = 'Copié';
+        setTimeout(() => { $('copyBtn').textContent = 'Copier'; }, 1400);
+      } catch (e) {
+        output.select();
+        document.execCommand('copy');
+      }
+    });
+
+    ['company','client','invoice','amount','dueDate','delayDays','service','contact','notes'].forEach((id) => {
+      $(id).addEventListener('input', render);
+      $(id).addEventListener('change', render);
+    });
+
+    $('year').textContent = new Date().getFullYear();
+    loadForm();
+    render();
+  </script>
+</body>
+</html>
